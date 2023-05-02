@@ -75,7 +75,7 @@ const processedDataOutput = SlackAppTestWorkflow.addStep(SlackAppTestFunction, {
 SlackAppTestWorkflow.addStep(Schema.slack.functions.SendMessage, {
   channel_id: "C055RLG0PV1",
   message:
-    `Your data ${processedDataOutput.outputs.output_field1} ${processedDataOutput.outputs.output_field2} was processed successfully`,
+    `Your data was processed with status code: ${processedDataOutput.outputs.status_code} status text: ${processedDataOutput.outputs.status_text}!`,
 });
 
 export { SlackAppTestWorkflow };

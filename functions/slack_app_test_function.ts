@@ -30,25 +30,69 @@ export const SlackAppTestFunction = DefineFunction({
   },
   output_parameters: {
     properties: {
-      output_field1: {
-        type: Schema.types.string,
-        description: "Field1 in uppercase",
+      status_code: {
+        type: Schema.types.number,
+        description: "status code",
       },
 
-      output_field2: {
-        type: Schema.slack.types.timestamp,
-        description: "timestamp field",
+      status_text: {
+        type: Schema.types.string,
+        description: "status text",
       },
     },
-    required: ["output_field1", "output_field2"],
+    required: ["status_code", "status_text"],
   },
 });
+
+interface sampleData {
+  name: string;
+  descr: string;
+  timestamp: number;
+  option: string;
+}
+
+const postData = async (data: sampleData) => {
+  const url = "https://jsonplaceholder.typicode.com/posts";
+  let status_code;
+  let status_text;
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    status_code = response.status;
+    status_text = response.statusText;
+
+    if (!response.ok) {
+      const error = await response.text();
+      return { status_code, status_text, error };
+    }
+
+    return { status_code, status_text, error: null };
+  } catch (error) {
+    console.error(error);
+
+    return {
+      status_code: 500,
+      status_text: "Internal Server Error",
+      error: error.message,
+    };
+  }
+};
 
 export default SlackFunction(SlackAppTestFunction, ({ inputs }) => {
   const { field1, field2, field3, field4 } = inputs;
 
-  const output_field1 = field1 + field2 + field4;
-  const output_field2 = field3;
+  const data = {
+    name: field1,
+    descr: field2,
+    timestamp: field3,
+    option: field4,
+  };
 
-  return { outputs: { output_field1, output_field2 } };
+  const { status_code, status_text, error } = postData(data);
+
+  return { outputs: { status_code, status_text } };
 });

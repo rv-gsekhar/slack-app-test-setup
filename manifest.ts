@@ -14,6 +14,6 @@ export default Manifest({
   icon: "assets/default_new_app_icon.png",
   functions: [SlackAppTestFunction],
   workflows: [SlackAppTestWorkflow],
-  outgoingDomains: [],
+  outgoingDomains: ["jsonplaceholder.typicode.com"],
   botScopes: ["commands", "chat:write", "chat:write.public"],
 });
